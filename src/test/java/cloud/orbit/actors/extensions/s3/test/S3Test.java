@@ -69,8 +69,10 @@ public class S3Test
 
     public void testS3()
     {
-        // Skip if we're in travis
-        Assume.assumeFalse(StringUtils.equals(System.getenv("TRAVIS"), "true"));
+
+        Assume.assumeTrue(!StringUtils.equals(System.getenv("TRAVIS"), "true")
+                || StringUtils.equals(System.getenv("ORBIT_TEST_S3_ENABLED"), "true"));
+
 
         s3Configuration = new S3Configuration.Builder()
                 .withCredentialType(AmazonCredentialType.DEFAULT_PROVIDER_CHAIN)
@@ -78,10 +80,10 @@ public class S3Test
 
         s3StorageExtension = new S3StorageExtension(s3Configuration);
 
-        String bucketName = System.getenv("AWS_S3_BUCKET");
+        String bucketName = System.getenv("ORBIT_TEST_S3_BUCKET");
         if(bucketName == null)
         {
-            bucketName = "test-jhegarty";
+            bucketName = "orbit-test-bucket";
         }
 
         s3StorageExtension.setBucketName(bucketName);
