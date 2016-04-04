@@ -50,7 +50,7 @@ import java.util.concurrent.CompletableFuture;
 public class S3StorageExtension implements StorageExtension
 {
     private String name = "default";
-    private String bucketName = "orbit-test";
+    private String bucketName = "orbit-test-bucket";
     private S3Configuration s3Configuration = new S3Configuration();
     private S3Connection s3Connection;
 

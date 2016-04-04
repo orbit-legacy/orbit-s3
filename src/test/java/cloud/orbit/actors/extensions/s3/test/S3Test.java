@@ -66,7 +66,6 @@ public class S3Test
     }
 
     @Test
-
     public void testS3()
     {
 
@@ -80,17 +79,13 @@ public class S3Test
 
         s3StorageExtension = new S3StorageExtension(s3Configuration);
 
-        String bucketName = System.getenv("ORBIT_TEST_S3_BUCKET");
-        if(bucketName == null)
+        final String bucketName = System.getenv("ORBIT_TEST_S3_BUCKET");
+        if(StringUtils.isNotBlank(bucketName))
         {
-            bucketName = "orbit-test-bucket";
+            s3StorageExtension.setBucketName(bucketName);
         }
 
-        s3StorageExtension.setBucketName(bucketName);
-
         restartStage();
-
-
 
         Actor.getReference(TestActor.class, ACTOR_ID).writeRecord(TEST_STRING).join();
 
