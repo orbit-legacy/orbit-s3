@@ -88,21 +88,24 @@ public class S3StorageExtension implements StorageExtension
     @Override
     public Task<Void> clearState(final RemoteReference<?> reference, final Object state)
     {
-        final String bucketName = getBucketName();
-        final String itemId = generateDocumentId(reference);
+        return Task.runAsync(() ->
+        {
+            final String bucketName = getBucketName();
+            final String itemId = generateDocumentId(reference);
 
 
             s3Connection.getS3Client().deleteObject(bucketName, itemId);
-
-        return Task.done();
+        });
     }
 
     @Override
     public Task<Boolean> readState(final RemoteReference<?> reference, final Object state)
     {
-        final ObjectMapper mapper = s3Connection.getMapper();
-        final String bucketName = getBucketName();
-        final String itemId = generateDocumentId(reference);
+        return Task.supplyAsync(() ->
+        {
+            final ObjectMapper mapper = s3Connection.getMapper();
+            final String bucketName = getBucketName();
+            final String itemId = generateDocumentId(reference);
 
             try
             {
@@ -113,7 +116,7 @@ public class S3StorageExtension implements StorageExtension
             }
             catch (AmazonServiceException e)
             {
-                String errorCode = e.getErrorCode();
+                final String errorCode = e.getErrorCode();
                 if (!errorCode.equals("NoSuchKey"))
                 {
                     throw e;
@@ -121,10 +124,11 @@ public class S3StorageExtension implements StorageExtension
                 return Task.fromValue(false);
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new UncheckedException(e);
             }
+        });
     }
 
     public Task<?> test(Runnable runnable)
@@ -135,34 +139,34 @@ public class S3StorageExtension implements StorageExtension
     @Override
     public Task<Void> writeState(final RemoteReference<?> reference, final Object state)
     {
-
+        return Task.runAsync(() ->
+        {
             final ObjectMapper mapper = s3Connection.getMapper();
             final String bucketName = getBucketName();
             final String itemId = generateDocumentId(reference);
 
-                ByteArrayOutputStream fileStream = new ByteArrayOutputStream();
-                try
-                {
+            final ByteArrayOutputStream fileStream = new ByteArrayOutputStream();
+            try
+            {
 
-                    mapper.writeValue(fileStream, state);
-                }
-                catch(IOException e)
-                {
-                    throw new UncheckedException(e);
-                }
+                mapper.writeValue(fileStream, state);
+            }
+            catch (IOException e)
+            {
+                throw new UncheckedException(e);
+            }
 
-                InputStream inputStream = new ByteArrayInputStream(fileStream.toByteArray());
-                s3Connection.getS3Client().putObject(bucketName, itemId, inputStream, null);
-
-        return Task.done();
+            final InputStream inputStream = new ByteArrayInputStream(fileStream.toByteArray());
+            s3Connection.getS3Client().putObject(bucketName, itemId, inputStream, null);
+        });
     }
 
     public String generateDocumentId(final RemoteReference<?> reference)
     {
-        Class<?> referenceClass = RemoteReference.getInterfaceClass(reference);
-        String idDecoration = referenceClass.getSimpleName();
+        final Class<?> referenceClass = RemoteReference.getInterfaceClass(reference);
+        final String idDecoration = referenceClass.getSimpleName();
 
-        String documentId = String.format(
+        final String documentId = String.format(
                 "%s%s%s",
                 idDecoration,
                 "/",
