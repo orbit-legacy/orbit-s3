@@ -29,6 +29,7 @@
 package cloud.orbit.actors.extensions.s3.test;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 
 import cloud.orbit.actors.Actor;
@@ -36,6 +37,7 @@ import cloud.orbit.actors.Stage;
 import cloud.orbit.actors.extensions.s3.AmazonCredentialType;
 import cloud.orbit.actors.extensions.s3.S3Configuration;
 import cloud.orbit.actors.extensions.s3.S3StorageExtension;
+import cloud.orbit.util.StringUtils;
 
 
 /**
@@ -51,26 +53,6 @@ public class S3Test
     private static final String TEST_STRING2 = "NewTestString4856737";
     private static final String ACTOR_ID = "TestActor3435";
 
-    public S3Test()
-    {
-        s3Configuration = new S3Configuration.Builder()
-                .withCredentialType(AmazonCredentialType.DEFAULT_PROVIDER_CHAIN)
-                .build();
-
-        s3StorageExtension = new S3StorageExtension(s3Configuration);
-
-        String bucketName = System.getenv("AWS_S3_BUCKET");
-        if(bucketName == null)
-        {
-            bucketName = "orbit-test-bucket";
-        }
-
-        s3StorageExtension.setBucketName(bucketName);
-
-        restartStage();
-
-    }
-
     private void restartStage()
     {
         if(stage != null)
@@ -84,8 +66,30 @@ public class S3Test
     }
 
     @Test
-    public void testWrite()
+
+    public void testS3()
     {
+        // Skip if we're in travis
+        Assume.assumeFalse(StringUtils.equals(System.getenv("TRAVIS"), "true"));
+
+        s3Configuration = new S3Configuration.Builder()
+                .withCredentialType(AmazonCredentialType.DEFAULT_PROVIDER_CHAIN)
+                .build();
+
+        s3StorageExtension = new S3StorageExtension(s3Configuration);
+
+        String bucketName = System.getenv("AWS_S3_BUCKET");
+        if(bucketName == null)
+        {
+            bucketName = "test-jhegarty";
+        }
+
+        s3StorageExtension.setBucketName(bucketName);
+
+        restartStage();
+
+
+
         Actor.getReference(TestActor.class, ACTOR_ID).writeRecord(TEST_STRING).join();
 
         String recordValue = Actor.getReference(TestActor.class, ACTOR_ID).getRecord().join();
