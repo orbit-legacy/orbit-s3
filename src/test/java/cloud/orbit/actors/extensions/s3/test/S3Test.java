@@ -37,7 +37,13 @@ import cloud.orbit.actors.Stage;
 import cloud.orbit.actors.extensions.s3.AmazonCredentialType;
 import cloud.orbit.actors.extensions.s3.S3Configuration;
 import cloud.orbit.actors.extensions.s3.S3StorageExtension;
+import cloud.orbit.util.IOUtils;
 import cloud.orbit.util.StringUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 /**
@@ -106,6 +112,19 @@ public class S3Test
 
         recordValue = Actor.getReference(TestActor.class, ACTOR_ID).getRecord().join();
         Assert.assertEquals(recordValue, TEST_STRING2);
+
+        try
+        {
+            File file = new File(getClass().getClassLoader().getResource("bioware-logo.png").getFile());
+            InputStream targetStream = new FileInputStream(file);
+            byte[] data = IOUtils.toByteArray(targetStream);
+
+            Actor.getReference(TestActor.class, ACTOR_ID).writeImage(data).join();
+        }
+        catch(IOException e)
+        {
+
+        }
 
         Actor.getReference(TestActor.class, ACTOR_ID).clearRecord().join();
 

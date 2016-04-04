@@ -30,6 +30,12 @@ package cloud.orbit.actors.extensions.s3.test;
 
 import cloud.orbit.actors.runtime.AbstractActor;
 import cloud.orbit.concurrent.Task;
+import cloud.orbit.util.IOUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by joe@bioware.com on 2016-04-04.
@@ -39,6 +45,7 @@ public class TestActorImpl extends AbstractActor<TestActorImpl.State> implements
     public static class State
     {
         public String record;
+        public byte[] image;
     }
 
     @Override
@@ -59,5 +66,12 @@ public class TestActorImpl extends AbstractActor<TestActorImpl.State> implements
     public Task<String> getRecord()
     {
         return Task.fromValue(state().record);
+    }
+
+    @Override
+    public Task writeImage(byte[] imageData)
+    {
+        state().image = imageData;
+        return writeState();
     }
 }

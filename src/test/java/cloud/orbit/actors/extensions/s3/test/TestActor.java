@@ -39,4 +39,6 @@ public interface TestActor extends Actor
     Task writeRecord(String myRecord);
     Task clearRecord();
     Task<String> getRecord();
+    Task writeImage(byte[] imageData);
+
 }
