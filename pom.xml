@@ -36,7 +36,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	
     <groupId>cloud.orbit</groupId>
     <artifactId>orbit-s3</artifactId>
-    <version>0.8.0</version>
+    <version>0.9.0-SNAPSHOT</version>
     <name>Orbit Amazon S3 Extension</name>
     <description>Amazon S3 storage extension for Orbit.</description>
     <url>https://github.com/orbit/orbit-s3/</url>
