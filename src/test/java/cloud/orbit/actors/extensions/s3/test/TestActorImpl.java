@@ -57,7 +57,7 @@ public class TestActorImpl extends AbstractActor<TestActorImpl.State> implements
     }
 
     @Override
-    public Task clearRecord()
+    public Task clearAllState()
     {
         return clearState();
     }
@@ -73,5 +73,11 @@ public class TestActorImpl extends AbstractActor<TestActorImpl.State> implements
     {
         state().image = imageData;
         return writeState();
+    }
+
+    @Override
+    public Task<byte[]> getImage()
+    {
+        return Task.fromValue(state().image);
     }
 }

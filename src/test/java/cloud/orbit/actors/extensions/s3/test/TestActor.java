@@ -37,8 +37,8 @@ import cloud.orbit.concurrent.Task;
 public interface TestActor extends Actor
 {
     Task writeRecord(String myRecord);
-    Task clearRecord();
+    Task clearAllState();
     Task<String> getRecord();
     Task writeImage(byte[] imageData);
-
+    Task<byte[]> getImage();
 }

@@ -131,11 +131,6 @@ public class S3StorageExtension implements StorageExtension
         });
     }
 
-    public Task<?> test(Runnable runnable)
-    {
-        return Task.from(CompletableFuture.runAsync(TaskContext.wrap(runnable)));
-    }
-
     @Override
     public Task<Void> writeState(final RemoteReference<?> reference, final Object state)
     {

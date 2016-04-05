@@ -113,20 +113,35 @@ public class S3Test
         recordValue = Actor.getReference(TestActor.class, ACTOR_ID).getRecord().join();
         Assert.assertEquals(recordValue, TEST_STRING2);
 
+        byte[] demoImage = null;
+
         try
         {
             File file = new File(getClass().getClassLoader().getResource("bioware-logo.png").getFile());
             InputStream targetStream = new FileInputStream(file);
-            byte[] data = IOUtils.toByteArray(targetStream);
-
-            Actor.getReference(TestActor.class, ACTOR_ID).writeImage(data).join();
+            demoImage = IOUtils.toByteArray(targetStream);
         }
         catch(IOException e)
         {
 
         }
 
-        Actor.getReference(TestActor.class, ACTOR_ID).clearRecord().join();
+
+
+        if(demoImage != null)
+        {
+            Actor.getReference(TestActor.class, ACTOR_ID).writeImage(demoImage).join();
+
+            byte[] readImage = Actor.getReference(TestActor.class, ACTOR_ID).getImage().join();
+            Assert.assertEquals(demoImage, readImage);
+
+            restartStage();
+
+            readImage = Actor.getReference(TestActor.class, ACTOR_ID).getImage().join();
+            Assert.assertEquals(demoImage, readImage);
+        }
+
+        Actor.getReference(TestActor.class, ACTOR_ID).clearAllState().join();
 
         recordValue = Actor.getReference(TestActor.class, ACTOR_ID).getRecord().join();
         Assert.assertNull(recordValue);
