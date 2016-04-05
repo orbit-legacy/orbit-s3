@@ -133,7 +133,7 @@ public class S3Test
             Actor.getReference(TestActor.class, ACTOR_ID).writeImage(demoImage).join();
 
             byte[] readImage = Actor.getReference(TestActor.class, ACTOR_ID).getImage().join();
-            Assert.assertEquals(demoImage, readImage);
+            Assert.assertArrayEquals(demoImage, readImage);
 
             restartStage();
 
