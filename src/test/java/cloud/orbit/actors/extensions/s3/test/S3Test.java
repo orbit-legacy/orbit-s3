@@ -138,7 +138,7 @@ public class S3Test
             restartStage();
 
             readImage = Actor.getReference(TestActor.class, ACTOR_ID).getImage().join();
-            Assert.assertEquals(demoImage, readImage);
+            Assert.assertArrayEquals(demoImage, readImage);
         }
 
         Actor.getReference(TestActor.class, ACTOR_ID).clearAllState().join();
