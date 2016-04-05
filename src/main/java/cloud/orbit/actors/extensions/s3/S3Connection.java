@@ -50,7 +50,6 @@ import cloud.orbit.util.StringUtils;
 public class S3Connection
 {
     private AmazonS3Client s3Client;
-    private TransferManager transferManager;
     private ObjectMapper mapper;
 
     public S3Connection(final S3Configuration s3Configuration)
@@ -105,8 +104,6 @@ public class S3Connection
         {
             s3Client.setEndpoint(s3Configuration.getEndpoint());
         }
-
-        transferManager = new TransferManager(s3Client);
     }
 
     public ObjectMapper getMapper()
@@ -119,8 +116,4 @@ public class S3Connection
         return s3Client;
     }
 
-    public TransferManager getTransferManager()
-    {
-        return transferManager;
-    }
 }
